@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Game of Life</title>
+    <link rel="stylesheet" href="css/gameoflife.css" />
+</head>
+<body>
+    <h2>Game of Life</h2>
+    <div id="field"></div>
+    <div class="inputs">
+        Field Width: <input id="fieldWidth" type="number" />
+        Field Height: <input id="fieldHeight" type="number" />
+    </div>
+    <div class="buttons">
+        <button class="button-19" onclick="setup()">Init</button>
+        <button class="button-19" onclick="next()">Next Gen</button>
+    </div>
+    <div class="info">Generation: <span id="gen"></span></div>
+    <script src="js/index.js"></script>
+</body>
+</html>

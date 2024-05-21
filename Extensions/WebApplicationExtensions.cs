@@ -1,4 +1,7 @@
-﻿using GameOfLife.Contracts;
+﻿using AutoMapper;
+using GameOfLife.Contracts;
+using GameOfLife.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GameOfLife.Extensions
 {
@@ -8,20 +11,18 @@ namespace GameOfLife.Extensions
         {
             var serviceScope = app.Services.CreateScope();
             var gameOfLifeService = serviceScope.ServiceProvider.GetService<IGameOfLife>();
+            var mapper = serviceScope.ServiceProvider.GetService<IMapper>();
 
-            // Get field as List<Cell>
-            app.MapGet("/field", (HttpContext httpContext) => gameOfLifeService?.GetField())
+            app.MapGet("/field", (HttpContext httpContext) => mapper?.Map<FieldGetDto>(gameOfLifeService?.GetField()))
             .WithName("GetField")
             .WithOpenApi();
 
-            // Get field size as (int, int) where 1 argument is field width and second field height
-            app.MapGet("/fieldsize", (HttpContext httpContext) => gameOfLifeService?.GetFieldSize())
-            .WithName("GetFieldSize")
+            app.MapPost("/fieldinit", ([FromQuery] int? width, [FromQuery] int? height, HttpContext httpContext) => gameOfLifeService?.InitField(width, height))
+            .WithName("PostInitField")
             .WithOpenApi();
 
-            // Initialize a new field
-            app.MapPost("/fieldinit", (int? width, int? height, HttpContext httpContext) => gameOfLifeService?.InitField(width, height))
-            .WithName("PostInitField")
+            app.MapPost("/nextfieldgeneration", (HttpContext httpContext) => gameOfLifeService?.NextGen())
+            .WithName("PostNextFieldGeneration")
             .WithOpenApi();
 
             // Further Endpoint here

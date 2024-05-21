@@ -1,31 +1,30 @@
 ﻿using GameOfLife.Contracts;
-using GameOfLife.Enums;
-using GameOfLife.Helpers;
+using GameOfLife.Extensions;
 using GameOfLife.Models;
 
 namespace GameOfLife.Services
 {
     public class GameOfLifeService : IGameOfLife
     {
-        public List<Cell>? Field { get; private set; }
-        public Size FieldSize { get; private set; } = new();
+        public Field Field { get; private set; } = new();
 
-        public List<Cell> GetField() => Field ??= [];
-
-        public Size GetFieldSize() => FieldSize;
+        public Field GetField() => Field;
 
         public void InitField(int? width, int? height)
         {
-            FieldSize.Width = width ?? 5;
-            FieldSize.Height = height ?? 5;
-            Field = Enumerable.Range(0, FieldSize.Width * FieldSize.Height).Select(index =>
-                    new Cell((index % FieldSize.Width), ((index - (index % FieldSize.Width)) / FieldSize.Width), EnumHelper.GetRandomEnumValue<GameState>())
-                ).ToList();
+            Field.InitField(width, height);
         }
 
         public void NextGen()
         {
-            // Todo
+            foreach (Cell cell in Field.Cells)
+            {
+                var livingNeighbours = Field.CountLivingNeighbouringCells(cell);
+                cell.RuleOfSolitude(livingNeighbours)
+                    .RuleOfOverpopulation(livingNeighbours)
+                    .RuleOfSurvivor(livingNeighbours)
+                    .RuleOfCreation(livingNeighbours);
+            }
         }
     }
 }
